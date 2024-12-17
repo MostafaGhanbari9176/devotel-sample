@@ -20,12 +20,14 @@ import {
   UserListResponseDTO,
 } from './dto/user-entity.dto';
 import { Request, Response } from "express";
+import { UnAuthorizedRoute } from "../decorator/auth.decorator";
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post("signup")
+  @UnAuthorizedRoute()
   async signup(@Body() data: SignUpDto, @Res({passthrough:true}) res:Response): Promise<LoginResponseDto> {
     const emailIsUsed = this.userService.emailIsExists(data.email);
 
@@ -43,6 +45,7 @@ export class UserController {
   }
 
   @Post("login")
+  @UnAuthorizedRoute()
   async login(@Body() data: LoginDto, @Res({passthrough:true}) res:Response): Promise<LoginResponseDto> {
     const userIsExists = this.userService.userIsExists(data.email);
 
