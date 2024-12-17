@@ -1,5 +1,6 @@
 import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import { UUIDV4 } from "sequelize";
+import { Post } from "../../post/entities/post.entity";
 
 export enum UserRole {
   Admin = 'Admin',
@@ -29,6 +30,6 @@ export class User extends Model{
   @Column({ allowNull: true })
   lastname: string;
 
-  @HasMany(() => undefined) //fix after adding posts model
-  posts: any[];
+  @HasMany(() => Post, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+  posts: Post[];
 }

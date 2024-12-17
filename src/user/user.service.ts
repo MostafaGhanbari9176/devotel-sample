@@ -33,12 +33,13 @@ export class UserService {
   async pagedList(
     page: number,
     limit: number,
-  ): Promise<{ users: UserDTO[]; pageCount: number }> {
+  ): Promise<{ users: UserDTO[], pageCount: number }> {
     const offset = (page - 1) * limit;
     const result = await this.userModel.findAndCountAll({
       limit: limit,
       offset: offset,
-      order:[["createdAt", "DESC"]]
+      order:[["createdAt", "DESC"]],
+      attributes:['username', 'email', 'role']
     });
 
     return {
