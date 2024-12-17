@@ -4,7 +4,7 @@ import {
   Auth,
   createUserWithEmailAndPassword,
   getAuth,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import * as admin from "firebase-admin";
 import { auth, credential } from "firebase-admin";
@@ -88,6 +88,10 @@ export class FirebaseService {
       expirationTime: tokenDetail.expirationTime,
       refreshToken: userCredential.user.refreshToken
     };
+  }
+
+  async refresh(refreshToken:string){
+
   }
 
   async validateToken(token: string): Promise<IdentityDto> {

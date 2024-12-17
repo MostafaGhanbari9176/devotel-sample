@@ -12,9 +12,7 @@ export class User extends Model{
 
   @Column({
     allowNull:false,
-    primaryKey:true,
-    type:DataType.UUIDV4,
-    defaultValue:UUIDV4
+    primaryKey:true
   })
   username:string
 

@@ -5,10 +5,14 @@ import { User } from './entities/user.entity';
 import { SignUpDto } from './dto/sign-up.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserDetailDto, UserDTO } from './dto/user-entity.dto';
+import { FirebaseService } from "../firebase/firebase.service";
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User) private userModel: typeof User) {}
+  constructor(
+    @InjectModel(User) private userModel: typeof User,
+    private readonly firebaseService: FirebaseService,
+  ) {}
 
   async emailIsExists(email: string): Promise<boolean> {
     const user = await this.userModel.findOne({ where: { email: email } });
@@ -16,9 +20,11 @@ export class UserService {
     return !!user;
   }
 
-  async signup(data: SignUpDto) {
-    const user = await this.userModel.create({ ...data });
-    //sending data to firebase
+  async signup(data: SignUpDto):Promise<{ token: string, expirationTime: string, refreshToken:string }> {
+    const { uid, token, refreshToken, expirationTime } = await this.firebaseService.signup(data.email, data.password);
+    await this.userModel.create({ username:uid, ...data });
+
+    return { token, expirationTime, refreshToken };
   }
 
   async userIsExists(email: string): Promise<boolean> {
@@ -27,7 +33,8 @@ export class UserService {
   }
 
   async login(data: LoginDto) {
-    //check user credential with firebase
+    const { token, refreshToken, expirationTime } = await this.firebaseService.login(data.email, data.password);
+    return { token, expirationTime, refreshToken };
   }
 
   async pagedList(
