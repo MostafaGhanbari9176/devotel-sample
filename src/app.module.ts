@@ -9,6 +9,7 @@ import { FirebaseModule } from './firebase/firebase.module';
 import configs from './config/configs';
 import { AdminModule } from './admin/admin.module';
 import { AuthenticationGuard } from './guard/authentication.guarf';
+import { AuthorizationGuard } from "./guard/authorizationGuard";
 
 @Module({
   imports: [
@@ -26,6 +27,10 @@ import { AuthenticationGuard } from './guard/authentication.guarf';
       provide: 'APP_GUARD',
       useClass: AuthenticationGuard,
     },
+    {
+      provide:"APP_GUARD",
+      useClass:AuthorizationGuard
+    }
   ],
 })
 export class AppModule {}

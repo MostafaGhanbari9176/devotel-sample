@@ -27,6 +27,7 @@ import { CheckRole } from "../decorator/role.decorator";
 import { UserRole } from "./entities/user.entity";
 
 @Controller('user')
+@CheckRole([UserRole.Admin, UserRole.Simple])
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
