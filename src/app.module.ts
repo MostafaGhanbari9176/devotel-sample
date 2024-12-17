@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import configs from './config/configs';
+import { AdminModule } from './admin/admin.module';
 import { AuthenticationGuard } from './guard/authentication.guarf';
 
 @Module({
@@ -16,6 +17,7 @@ import { AuthenticationGuard } from './guard/authentication.guarf';
     UserModule,
     PostModule,
     FirebaseModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

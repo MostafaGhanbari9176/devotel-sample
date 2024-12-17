@@ -1,20 +1,27 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UploadedFile,
   UseInterceptors,
-  UploadedFile, ParseIntPipe, NotFoundException
-} from "@nestjs/common";
+} from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { MessageResponseDTO } from "../dto/response.dto";
-import { PostDetailResponseDTO, PostListResponseDTO } from "./dto/post-entity.dto";
+import { MessageResponseDTO } from '../dto/response.dto';
+import {
+  PostDetailResponseDTO,
+  PostListResponseDTO,
+} from './dto/post-entity.dto';
+import { CheckRole } from '../decorator/role.decorator';
+import { UserRole } from '../user/entities/user.entity';
 
 @Controller('post')
 export class PostController {
@@ -36,28 +43,31 @@ export class PostController {
     };
   }
 
-  @Get("list/page/:pagenumber/:limit")
-  async pagedList(@Param('pagenumber', ParseIntPipe) page: number, @Param('limit', ParseIntPipe) limit: number):Promise<PostListResponseDTO> {
+  @Get('list/page/:pagenumber/:limit')
+  async pagedList(
+    @Param('pagenumber', ParseIntPipe) page: number,
+    @Param('limit', ParseIntPipe) limit: number,
+  ): Promise<PostListResponseDTO> {
     const { posts, pageCount } = await this.postService.pagedList(page, limit);
-    
+
     return {
-      statusCode:200,
-      posts:posts,
-      page:page,
-      pageCount:pageCount
-    }
+      statusCode: 200,
+      posts: posts,
+      page: page,
+      pageCount: pageCount,
+    };
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string):Promise<PostDetailResponseDTO> {
+  async findOne(@Param('id') id: string): Promise<PostDetailResponseDTO> {
     const post = await this.postService.findOne(id);
 
-    if(!post) throw new NotFoundException("post not found")
+    if (!post) throw new NotFoundException('post not found');
 
     return {
-      statusCode:200,
-      post:post
-    }
+      statusCode: 200,
+      post: post,
+    };
   }
 
   @Patch(':id')
@@ -75,9 +85,7 @@ export class PostController {
   }
 
   @Delete(':id')
-  async remove(
-    @Param('id') id: string,
-  ): Promise<MessageResponseDTO> {
+  async remove(@Param('id') id: string): Promise<MessageResponseDTO> {
     const success = await this.postService.remove(id);
 
     if (!success) throw new NotFoundException('post not found');

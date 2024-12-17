@@ -71,12 +71,12 @@ export class UserService {
     return true;
   }
 
-  async remove(username: string): Promise<boolean> {
+  async logout(username: string, token:string): Promise<boolean> {
     const user = await this.userModel.findByPk(username);
 
     if (!user) return false;
 
-    await user.destroy({ force: true });
+    await this.firebaseService.logout(token)
 
     return true;
   }

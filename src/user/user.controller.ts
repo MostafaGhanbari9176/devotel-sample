@@ -21,6 +21,10 @@ import {
 } from './dto/user-entity.dto';
 import { Request, Response } from "express";
 import { UnAuthorizedRoute } from "../decorator/auth.decorator";
+import { Identity } from "../decorator/identity.decorator";
+import { IdentityDto } from "../dto/identity.dto";
+import { CheckRole } from "../decorator/role.decorator";
+import { UserRole } from "./entities/user.entity";
 
 @Controller('user')
 export class UserController {
@@ -38,7 +42,7 @@ export class UserController {
     res.cookie("refresh_token", refreshToken, { httpOnly: true, path:"/user/auth/refresh"});
 
     return {
-      statusCode: 200,
+      statusCode: 201,
       token,
       expirationTime
     };
@@ -67,28 +71,11 @@ export class UserController {
   //
   // }
 
-  @Get('list/page/:pagenumber/:limit')
-  //TODO Admin access
-  async pagedList(
-    @Param('pagenumber', ParseIntPipe) limit: number,
-    @Param('limit', ParseIntPipe) page: number,
-  ): Promise<UserListResponseDTO> {
-    const { users, pageCount } = await this.userService.pagedList(page, limit);
-
-    return {
-      page: page,
-      users: users,
-      pageCount: pageCount,
-      statusCode: 200,
-    };
-  }
-
-  @Get(':username')
-  //TODO Admin access
-  async findOne(
-    @Param('username') username: string,
+  @Get('detail')
+  async detail(
+    @Identity() identity:IdentityDto
   ): Promise<UserDetailResponseDTO> {
-    const user = await this.userService.findOne(username);
+    const user = await this.userService.findOne(identity.username);
 
     if (!user) throw new NotFoundException('user not found');
 
@@ -98,13 +85,12 @@ export class UserController {
     };
   }
 
-  @Patch(':username')
-  //TODO Admin access
+  @Patch('update')
   async update(
-    @Param('username') username: string,
+    @Identity() identity:IdentityDto,
     @Body() data: UpdateUserDto,
   ): Promise<MessageResponseDTO> {
-    const success = this.userService.update(username, data);
+    const success = this.userService.update(identity.username, data);
     if (!success) throw new NotFoundException('user not found');
 
     return {
@@ -113,18 +99,17 @@ export class UserController {
     };
   }
 
-  @Delete(':username')
-  //TODO Admin access
-  async remove(
-    @Param('username') username: string,
+  @Delete('logout')
+  async logout(
+    @Identity() identity:IdentityDto,
   ): Promise<MessageResponseDTO> {
-    const success = await this.userService.remove(username);
+    const success = await this.userService.logout(identity.username, identity.token);
 
     if (!success) throw new NotFoundException('user not found');
 
     return {
       statusCode: 200,
-      message: 'remove success',
+      message: 'logout success',
     };
   }
 }

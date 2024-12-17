@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  revokeAccessToken
 } from "firebase/auth";
 import * as admin from "firebase-admin";
 import { auth, credential } from "firebase-admin";
@@ -99,7 +100,12 @@ export class FirebaseService {
 
     return {
       userRole:decodedToken.role,
-      username:decodedToken.uid
+      username:decodedToken.uid,
+      token
     };
+  }
+
+  async logout(token: string) {
+    await revokeAccessToken(this.firebaseAuth, token)
   }
 }
