@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
 import { UserDetailDto, UserDTO } from "../user/dto/user-entity.dto";
 import { UpdateUserDto } from "../user/dto/update-user.dto";
 import { InjectModel } from "@nestjs/sequelize";
