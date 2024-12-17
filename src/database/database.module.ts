@@ -14,6 +14,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         database: configService.get<string>('DB_NAME'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
+        autoLoadModels:true,
+        synchronize:true
       }),
     }),
   ],

@@ -1,14 +1,20 @@
-import { Column, HasMany, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { UUIDV4 } from "sequelize";
 
-enum UserRole {
+export enum UserRole {
   Admin = 'Admin',
   Simple = 'Simple',
 }
 
-@Table
-export class User {
+@Table({createdAt:true, updatedAt:true})
+export class User extends Model{
 
-  @Column({unique: true})
+  @Column({
+    allowNull:false,
+    primaryKey:true,
+    type:DataType.UUIDV4,
+    defaultValue:UUIDV4
+  })
   username:string
 
   @Column({ unique: true, allowNull: false })
