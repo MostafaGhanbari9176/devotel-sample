@@ -14,15 +14,31 @@ import {
   UserListResponseDTO,
 } from '../user/dto/user-entity.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
-import { MessageResponseDTO } from '../dto/response.dto';
+import { ErrorResponseDTO, MessageResponseDTO } from "../dto/response.dto";
 import { CheckRole } from '../decorator/role.decorator';
 import { UserRole } from '../user/entities/user.entity';
+import {
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags
+} from "@nestjs/swagger";
 
+@Controller('admin')
 @CheckRole([UserRole.Admin])
+@ApiTags("Admin")
+@ApiBearerAuth("access_token")
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('user/list/page/:pagenumber/:limit')
+  @ApiOperation({ summary: "paged list of all users | `Admin Access`" })
+  @ApiParam({ name: "pagenumber", type: Number, description: "page number" })
+  @ApiParam({ name: "limit", type: Number, description: "number of users per page" })
+  @ApiInternalServerErrorResponse({ type: ErrorResponseDTO })
+  @ApiOkResponse({ type: UserListResponseDTO })
   async pagedList(
     @Param('pagenumber', ParseIntPipe) limit: number,
     @Param('limit', ParseIntPipe) page: number,
@@ -38,6 +54,10 @@ export class AdminController {
   }
 
   @Get('user/:username')
+  @ApiOperation({ summary: "detail of an user | `Admin Access`" })
+  @ApiParam({ name: "username", type: String })
+  @ApiInternalServerErrorResponse({ type: ErrorResponseDTO })
+  @ApiOkResponse({ type: UserDetailResponseDTO })
   async findOne(
     @Param('username') username: string,
   ): Promise<UserDetailResponseDTO> {
@@ -52,6 +72,10 @@ export class AdminController {
   }
 
   @Patch('user/:username')
+  @ApiOperation({ summary: "updating an user | `Admin Access`" })
+  @ApiParam({ name: "username", type: String })
+  @ApiInternalServerErrorResponse({ type: ErrorResponseDTO })
+  @ApiOkResponse({ type: MessageResponseDTO })
   async update(
     @Param('username') username: string,
     @Body() data: UpdateUserDto,
@@ -66,6 +90,10 @@ export class AdminController {
   }
 
   @Delete('user/:username')
+  @ApiOperation({ summary: "deleting an user | `Admin Access`" })
+  @ApiParam({ name: "username", type: String })
+  @ApiInternalServerErrorResponse({ type: ErrorResponseDTO })
+  @ApiOkResponse({ type: MessageResponseDTO })
   async remove(
     @Param('username') username: string,
   ): Promise<MessageResponseDTO> {

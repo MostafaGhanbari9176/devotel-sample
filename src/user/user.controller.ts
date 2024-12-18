@@ -25,9 +25,12 @@ import { Identity } from "../decorator/identity.decorator";
 import { IdentityDto } from "../dto/identity.dto";
 import { CheckRole } from "../decorator/role.decorator";
 import { UserRole } from "./entities/user.entity";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @Controller('user')
 @CheckRole([UserRole.Admin, UserRole.Simple])
+@ApiTags("User")
+@ApiBearerAuth("access_token")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
